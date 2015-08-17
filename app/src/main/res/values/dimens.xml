@@ -1,0 +1,39 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
+         https://developer.android.com/design/patterns/navigation-drawer.html -->
+    <dimen name="navigation_drawer_width">240dp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="list_icon_size">85dp</dimen>
+    <dimen name="list_icon_width">85dp</dimen>
+    <dimen name="list_header_maxHeight">62dp</dimen>
+    <dimen name="list_header_paddingTop">12.5dp</dimen>
+
+    <dimen name="list_header_textsize">16sp</dimen>
+    <dimen name="list_textsize">12.5sp</dimen>
+    <dimen name="list_hour_textsize">12sp</dimen>
+    <!-- LANDSCAPE LAYOUT-->
+    <dimen name="list_icon_size_land">100dp</dimen>
+    <dimen name="list_icon_width_land">150dp</dimen>
+    <dimen name="list_header_maxHeight_land">75dp</dimen>
+
+    <dimen name="list_header_textsize_land">18sp</dimen>
+    <dimen name="list_textsize_land">15sp</dimen>
+    <dimen name="list_hour_textsize_land">14sp</dimen>
+    <dimen name="divider">0.1dp</dimen>
+    <!--Detail activity-->
+    <!--portrait-->
+    <dimen name="det_header_textsize">22sp</dimen>
+    <dimen name="det_cath_textsize">15sp</dimen>
+    <dimen name="det_time_textsize">14sp</dimen>
+    <dimen name="det_desc_textsize">17sp</dimen>
+    <!--land-->
+    <dimen name="det_header_textsize_land">25sp</dimen>
+    <dimen name="det_cath_textsize_land">17sp</dimen>
+    <dimen name="det_time_textsize_land">16sp</dimen>
+    <dimen name="det_desc_textsize_land">19sp</dimen>
+
+</resources>

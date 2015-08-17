@@ -1,0 +1,107 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="main.odessa.news.news.DetailActivity">
+    <RelativeLayout
+        android:id="@+id/lay1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include android:id="@+id/toolbar_actionbar" layout="@layout/toolbar_default"
+            android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/det_main_img"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar_actionbar"/>
+
+        <RelativeLayout
+            android:id="@+id/lay2"
+            android:layout_below="@id/det_main_img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+
+            <TextView
+                android:textSize="@dimen/det_header_textsize"
+                android:layout_marginTop="15dp"
+                android:id="@+id/det_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"/>
+            <View
+                android:id="@+id/View01"
+                android:layout_margin="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/det_header"
+                android:layout_alignParentLeft="true"
+                android:background="@color/grey_separator" />
+
+
+            <TextView
+                android:textSize="@dimen/det_desc_textsize"
+                android:id="@+id/det_description"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/View01"/>
+            <View
+                android:id="@+id/View02"
+                android:layout_margin="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/det_description"
+                android:layout_alignParentLeft="true"
+                android:background="@color/grey_separator" />
+            <LinearLayout
+                android:id="@+id/lay3"
+                android:layout_below="@+id/View02"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal|center_vertical">
+                <RatingBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/det_rating"
+                    android:paddingBottom="3dp"
+                    android:layout_marginRight="6dp"
+                    style="?android:attr/ratingBarStyleIndicator"
+                    android:numStars="5"
+                    android:clickable="false"
+                    android:max="100"
+                    android:focusableInTouchMode="false"
+                    android:focusable="false"
+                    android:isIndicator="true"/>
+                <TextView
+                    android:id="@+id/det_rating_text"
+                    android:layout_width="wrap_content"
+                    android:textSize="@dimen/det_desc_textsize"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"/>
+            </LinearLayout>
+            <View
+                android:id="@+id/View03"
+                android:layout_margin="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/lay3"
+                android:layout_alignParentLeft="true"
+                android:background="@color/grey_separator" />
+                <TextView
+                    android:layout_below="@+id/View03"
+                    android:id="@+id/det_publisher"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/det_desc_textsize"
+                    android:paddingBottom="15dp"
+                    />
+        </RelativeLayout>
+
+    </RelativeLayout>
+</ScrollView>
