@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "21.0.1"
 
     defaultConfig {
         applicationId "teamvoy.com.task"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
@@ -26,4 +26,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     compile 'com.yqritc:recyclerview-flexibledivider:1.2.5'
+    compile 'com.facebook.android:facebook-android-sdk:4.0.0'
 }

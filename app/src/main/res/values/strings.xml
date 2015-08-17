@@ -11,4 +11,8 @@
     <string name="search_header">Search</string>
     <string name="search_message"> Specify ingredients, please</string>
     <string name="title_activity_result">ResultActivity</string>
+
+    <string name="facebook_app_id">1624785834445262</string>
+
+    <string name="title_activity_facebook">FacebookActivity</string>
 </resources>

@@ -86,3 +86,4 @@ public class SearchDialog {
         return str;
     }
 }
+
