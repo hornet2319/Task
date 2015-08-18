@@ -66,7 +66,6 @@ public class SearchDialog {
         searchDialog.setPositiveButton("Find", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO call resultActivity here
                 Intent intent=new Intent(context, ResultActivity.class);
                 Log.d("INGredients",text.replaceAll("\\n",","));
 

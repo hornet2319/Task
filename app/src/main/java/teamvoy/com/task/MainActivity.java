@@ -28,6 +28,7 @@ import com.facebook.appevents.AppEventsLogger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import teamvoy.com.task.Fragments.LoginFragment;
 import teamvoy.com.task.dialogs.SearchDialog;
 import teamvoy.com.task.Fragments.AbstractFragment;
 import teamvoy.com.task.Fragments.NavigationDrawerFragment;
@@ -106,37 +107,7 @@ public class MainActivity extends ActionBarActivity
         } catch (NoSuchAlgorithmException e) {
 
         }
-       // FacebookUtil facebook=FacebookUtil.getInstance();
-     /*  if(!FacebookUtil.getInstance().isFacebookAvailable(this)){
-           AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme));
-           // Tell the user what happened
-           builder.setMessage("cannot find Facebook application \n Please install it.")
-                   // Alert title
-                   .setTitle("Error")
-                           // Can't exit via back button
-                   .setCancelable(false)
-                           // Create exit button
-                   .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int id) {
-                           // Exit the application
-                           try {
-                               startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                           } catch (android.content.ActivityNotFoundException anfe) {
-                               startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                           }
-                       }
-                   });
-           // Create dialog from builder
-           AlertDialog alert1 = builder.create();
-           // Show dialog
-           alert1.show();
-           // Center the message of the dialog
-           ((TextView)alert1.findViewById(android.R.id.message)).setGravity(Gravity.CENTER);
-           // Center the title of the dialog
-           ((TextView)alert1.findViewById((getResources().getIdentifier("alertTitle", "id", "android")))).setGravity(Gravity.CENTER);
-       }
-*/
+
     }
     @Override
     protected void onResume() {
@@ -178,6 +149,11 @@ public class MainActivity extends ActionBarActivity
                 args.putInt(ARG_SECTION_NUMBER, i);
                 fragment.setArguments(args);
                 break;
+            case 3:
+                fragment = new LoginFragment();
+                args.putInt(ARG_SECTION_NUMBER, i);
+                fragment.setArguments(args);
+                break;
 
             default:
                 fragment = new TopFragment();
@@ -194,6 +170,9 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);
+                break;
+            case 3:
+                mTitle = getString(R.string.title_section3);
                 break;
 
         }
@@ -242,40 +221,10 @@ public class MainActivity extends ActionBarActivity
             dialog.show();
         }
         if(id==R.id.action_login){
-            if(!FacebookUtil.getInstance().isFacebookAvailable(this)){
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme));
-                // Tell the user what happened
-                builder.setMessage("cannot find Facebook application \n Please install it.")
-                        // Alert title
-                        .setTitle("Error")
-                                // Can't exit via back button
-                        .setCancelable(false)
-                                // Create exit button
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                // Exit the application
-                                try {
-                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                                } catch (android.content.ActivityNotFoundException anfe) {
-                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                                }
-                            }
-                        });
-                // Create dialog from builder
-                AlertDialog alert1 = builder.create();
-                // Show dialog
-                alert1.show();
-                // Center the message of the dialog
-                ((TextView)alert1.findViewById(android.R.id.message)).setGravity(Gravity.CENTER);
-                // Center the title of the dialog
-                ((TextView)alert1.findViewById((getResources().getIdentifier("alertTitle", "id", "android")))).setGravity(Gravity.CENTER);
-            }
-           else {
-                Intent intent = new Intent(this, FacebookActivity.class);
-                startActivity(intent);
-            }
+            Intent intent=new Intent(this, FacebookActivity.class);
+            startActivity(intent);
         }
+
 
         return super.onOptionsItemSelected(item);
     }
