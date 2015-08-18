@@ -42,16 +42,17 @@ public class LoginFragment extends AbstractFragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
-        FacebookSdk.sdkInitialize(getActivity());
-        facebook=FacebookUtil.getInstance();
 
-        callbackManager=facebook.getCallbackManager();
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
+     callbackManager = CallbackManager.Factory.create();
 
         info=(TextView)rootView.findViewById(R.id.facebook_info);
         loginButton=(LoginButton)rootView.findViewById(R.id.facebook_login_button);
-        loginButton.setReadPermissions("user_friends","email");
-      /*  loginButton.setFragment(this);
+        loginButton.setReadPermissions("user_friends", "email");
+
+        loginButton.setFragment(this);
+
         loginButton.registerCallback(callbackManager,new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -73,7 +74,7 @@ public class LoginFragment extends AbstractFragment {
             public void onError(FacebookException e) {
                 info.setText("Login attempt failed.");
             }
-        });*/
+        });
         /* make the API call */
         return rootView;
 

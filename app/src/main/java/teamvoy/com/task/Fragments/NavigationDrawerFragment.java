@@ -128,7 +128,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
         items.add(new NavigationItem("Top Rated", getConvertedDrawable(R.drawable.icon_top_rated)));
         items.add(new NavigationItem("Trended", getConvertedDrawable(R.drawable.ic_trend2)));
-     //   items.add(new NavigationItem("Personal Data", getConvertedDrawable(R.drawable.ic_settings)));
+        items.add(new NavigationItem("Personal Data", getConvertedDrawable(R.drawable.ic_settings)));
 
         return items;
     }
