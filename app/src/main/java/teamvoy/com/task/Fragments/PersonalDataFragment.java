@@ -52,10 +52,10 @@ public class PersonalDataFragment extends AbstractFragment {
     protected static final String ARG_SECTION_NUMBER = "section_number";
     private final int SELECT_PHOTO = 1;
 
-    private TextView name_tv;
-    private TextView email_tv;
-    private TextView gender_tv;
-    private TextView birthDay_tv;
+    private static TextView name_tv;
+    private static TextView email_tv;
+    private static TextView gender_tv;
+    private static TextView birthDay_tv;
 
     private Button profile_picture_btn;
     private Button name_btn;
@@ -63,9 +63,9 @@ public class PersonalDataFragment extends AbstractFragment {
     private Button gender_btn;
     private Button birthDay_btn;
 
-    private ImageView profile_picture_iv;
+    private static ImageView profile_picture_iv;
 
-    private PreferencesUtil mPrefs;
+    private static PreferencesUtil mPrefs;
     private Context context;
 
 
@@ -77,7 +77,7 @@ public class PersonalDataFragment extends AbstractFragment {
 
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         // initializing views
-        profile_picture_iv=(ImageView)rootView.findViewById(R.id.data_img);
+         profile_picture_iv=(ImageView)rootView.findViewById(R.id.data_img);
 
         context=getActivity();
 
@@ -95,7 +95,7 @@ public class PersonalDataFragment extends AbstractFragment {
         mPrefs=PreferencesUtil.getInstance(getActivity());
 
         //refresh data
-        updateList(true);
+        update();
 
 
         //set listener for buttons
@@ -114,33 +114,32 @@ public class PersonalDataFragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateList(true);
+        update();
     }
     @Override
-     void updateList(boolean refresh) {
+    public void updateList(boolean refresh) {
         //setting data in TextViews
-        if(refresh) {
-            name_tv.setText("Name: " + mPrefs.getName("user"));
-            email_tv.setText("Email: " + mPrefs.getEmail("no email found"));
-            gender_tv.setText("Gender: " + mPrefs.getGender("unknown"));
-            birthDay_tv.setText("BirthDay: " + mPrefs.getBirthDay("unknown"));
-
-            //setting profile image
-            String path = "http://graph.facebook.com/" + mPrefs.getID("null") + "/picture?type=large";
-            ImageLoader.getInstance().displayImage(path, profile_picture_iv);
-        }
     }
+    //updating content
+    public static void update(){
+        name_tv.setText("Name: " + mPrefs.getName("user"));
+        email_tv.setText("Email: " + mPrefs.getEmail("no email found"));
+        gender_tv.setText("Gender: " + mPrefs.getGender("unknown"));
+        birthDay_tv.setText("BirthDay: " + mPrefs.getBirthDay("unknown"));
 
+        //setting profile image
+        ImageLoader.getInstance().displayImage(mPrefs.getImage("http://graph.facebook.com/" + mPrefs.getID("null") + "/picture?type=large"), profile_picture_iv);
+    }
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
     }
+    //listener for buttons
     private class BtnListener implements View.OnClickListener {
         AbstractDialog dialog;
         @Override
         public void onClick(View view) {
-            //TODO listeners 4 buttons here
             switch (view.getId()){
                 case R.id.data_img_btn:{
                     Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
@@ -162,10 +161,10 @@ public class PersonalDataFragment extends AbstractFragment {
                     break;
                 }
 
-                case R.id.data_bday_tv:{
-                    DialogFragment newFragment = new BirthdayDialog(context);
-                    newFragment.show(getFragmentManager(), "DatePicker");
-
+                case R.id.data_bday_btn:{
+                     dialog = new BirthdayDialog(context);
+                    dialog.setMessage("Specify your birthDay, please");
+                    dialog.show();
                     break;
 
                 }
@@ -193,7 +192,8 @@ public class PersonalDataFragment extends AbstractFragment {
                 } else {
 
                     Uri result = data.getData();
-                    ImageLoader.getInstance().displayImage(result.toString(),profile_picture_iv);
+                    mPrefs.setImage(result.toString());
+
 
                 }
         }

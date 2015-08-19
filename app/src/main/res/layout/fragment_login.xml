@@ -5,6 +5,7 @@
     android:padding="5dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 <RelativeLayout
+    android:paddingLeft="5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <ImageView
@@ -20,38 +21,44 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/data_img"
         android:text="Change profile image"/>
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/linear1"
         android:layout_below="@+id/data_img_btn"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
+        >
         <TextView
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/data_name_tv"
+
             android:textSize="18sp"
             android:layout_gravity="center_vertical"
             />
         <Button
             android:id="@+id/data_name_btn"
             style="@style/linear"
+            android:layout_alignParentRight="true"
             android:text="@string/data_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        </LinearLayout>
-    <LinearLayout
+        </RelativeLayout>
+    <RelativeLayout
         android:id="@+id/linear2"
         android:layout_below="@+id/linear1"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
+        >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/data_email_tv"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:textSize="18sp"
             android:layout_gravity="center_vertical"
             />
@@ -59,17 +66,20 @@
             android:id="@+id/data_email_btn"
             style="@style/linear"
             android:text="@string/data_button"
+            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    </LinearLayout>
-    <LinearLayout
+    </RelativeLayout>
+    <RelativeLayout
         android:id="@+id/linear3"
         android:layout_below="@+id/linear2"
-        android:orientation="horizontal"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
+        >
         <TextView
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/data_bday_tv"
@@ -78,21 +88,23 @@
             />
         <Button
             android:id="@+id/data_bday_btn"
+            android:layout_alignParentRight="true"
             style="@style/linear"
             android:text="@string/data_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    </LinearLayout>
-    <LinearLayout
+    </RelativeLayout>
+    <RelativeLayout
         android:id="@+id/linear4"
         android:layout_below="@+id/linear3"
-        android:orientation="horizontal"
+
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
+        android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:id="@+id/data_gender_tv"
             android:textSize="18sp"
             android:layout_gravity="center_vertical"
@@ -100,10 +112,11 @@
         <Button
             android:id="@+id/data_gender_btn"
             style="@style/linear"
+            android:layout_alignParentRight="true"
             android:text="@string/data_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
 </ScrollView>

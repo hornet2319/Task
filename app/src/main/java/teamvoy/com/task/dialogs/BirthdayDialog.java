@@ -1,63 +1,63 @@
 package teamvoy.com.task.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.format.Time;
 import android.widget.DatePicker;
 
 import java.util.Calendar;
 
+import teamvoy.com.task.Fragments.PersonalDataFragment;
+import teamvoy.com.task.R;
 import teamvoy.com.task.utils.PreferencesUtil;
 
 /**
  * Created by lubomyrshershun on 8/19/15.
  */
-public class BirthdayDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-    Context context;
-    private String data;
-    private int year;
-    private int month;
-    private int day;
-    private PreferencesUtil mPrefs;
-
-    public BirthdayDialog() {
-    }
-
+public class BirthdayDialog extends AbstractDialog {
+    String data="";
     public BirthdayDialog(Context context) {
-       this.context=context;
-        mPrefs=PreferencesUtil.getInstance(context);
+        super(context);
     }
-
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Use the current date as the default date in the picker
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-
-        // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(context, this, year, month, day);
-    }
-
-
     void write(String data) {
-    mPrefs.setBirthDay(data);
+
+        mPrefs.setBirthDay(data);
+        PersonalDataFragment.update();
     }
 
     @Override
-    public void onDateSet(DatePicker view, int selectedYear,
-                          int selectedMonth, int selectedDay) {
-        year  = selectedYear;
-        month = selectedMonth;
-        day   = selectedDay;
+    public void show() {
+        // Process to get Current Date
+        int mYear, mMonth, mDay;
+        Time today = new Time(Time.getCurrentTimezone());
+        today.setToNow();
+        mDay=today.monthDay;
+        mMonth=today.month;
+        mYear=today.year;
+        // Launch Date Picker Dialog
+        DatePickerDialog dpd = new DatePickerDialog(context,
+                new DatePickerDialog.OnDateSetListener() {
 
-        // Show selected date
-        data=""+day+"/"+(month+1)+"/"+year;
-        write(data);
+                    @Override
+                    public void onDateSet(DatePicker view, int nYear,
+                                          int monthOfYear, int dayOfMonth) {
+                        // toast=Toast.makeText(context, ""+dayOfMonth, Toast.LENGTH_SHORT);
+                        //  toast.show();
+                        data=dayOfMonth + "/" + (monthOfYear + 1) + "/" + nYear;
+
+                    }
+                }, mYear, mMonth, mDay);
+        dpd.setTitle("personal data");
+        dpd.setMessage(message);
+        dpd.setIcon(R.drawable.ic_settings);
+        dpd.show();
+        if (data!="") write(data);
     }
 }

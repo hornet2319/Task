@@ -6,5 +6,6 @@
         app:showAsAction="ifRoom" />
     <item android:id="@+id/action_login"
         android:title="Login"
+        android:icon="@drawable/ic_facebook"
         app:showAsAction="ifRoom" />
 </menu>

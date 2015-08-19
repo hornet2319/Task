@@ -43,6 +43,10 @@ public class PreferencesUtil{
         editor.putString("birthDay", birthDay);
         editor.commit();
     }
+    public void setImage(String path){
+        editor.putString("path", path);
+        editor.commit();
+    }
     public String getID(String defValue){
         return mPreferences.getString("id",defValue);
     }
@@ -58,4 +62,5 @@ public class PreferencesUtil{
     public String getBirthDay(String defValue){
         return mPreferences.getString("birthDay",defValue);
     }
+    public String getImage(String defValue){return mPreferences.getString("path",defValue);}
 }

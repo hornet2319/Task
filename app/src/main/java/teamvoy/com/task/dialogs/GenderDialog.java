@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import teamvoy.com.task.Fragments.PersonalDataFragment;
 import teamvoy.com.task.R;
 
 /**
@@ -66,6 +67,7 @@ public class GenderDialog extends AbstractDialog {
     @Override
     void write(String data) {
     mPrefs.setGender(data);
+        PersonalDataFragment.update();
     }
 
 }

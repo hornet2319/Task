@@ -174,6 +174,8 @@ public class MainActivity extends ActionBarActivity
                                             mPrefs.setEmail(object.getString("email"));
                                             mPrefs.setGender(object.getString("gender"));
                                             mPrefs.setBirthDay(object.getString("birthday"));
+                                            mPrefs.setImage("http://graph.facebook.com/" + mPrefs.getID("null") + "/picture?type=large");
+                                            PersonalDataFragment.update();
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
@@ -183,6 +185,7 @@ public class MainActivity extends ActionBarActivity
                         parameters.putString("fields", "id,name,email,gender, birthday");
                         request.setParameters(parameters);
                         request.executeAsync();
+
 
                     }
                     @Override
