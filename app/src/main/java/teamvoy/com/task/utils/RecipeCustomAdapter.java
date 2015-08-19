@@ -87,21 +87,14 @@ public class RecipeCustomAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.list_item_main, parent, false);
         }
         Recipe recipe = getRecipeConverted(position);
-        //TODO ADD Drawable here
+
         ImageView img=(ImageView)view.findViewById(R.id.list_img);
         TextView header=(TextView)view.findViewById(R.id.list_header);
         TextView publisher=(TextView)view.findViewById(R.id.list_publisher);
         RatingBar rating =(RatingBar)view.findViewById(R.id.list_rating);
-        //  if(fromInternet){
-        //TODO Downloading image from internet here
-        //test
-        //  img.setImageResource(R.drawable.nopc);
+
         imageLoader.displayImage(recipe.getImage_url(),img,options);
-        //  }
-        //  else{
-        //Todo getting image from cache
-        //   img.setImageResource(R.drawable.nopc);
-        // }
+
         DateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.ENGLISH);
 
         header.setText(recipe.getTitle());

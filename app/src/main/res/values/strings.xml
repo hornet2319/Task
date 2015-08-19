@@ -16,4 +16,5 @@
     <string name="facebook_app_id">1624785834445262</string>
 
     <string name="title_activity_facebook">FacebookActivity</string>
+    <string name="data_button">Change</string>
 </resources>

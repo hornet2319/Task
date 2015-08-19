@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.v4.app.FragmentManager;
@@ -22,20 +21,31 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
 
-import teamvoy.com.task.Fragments.LoginFragment;
+import teamvoy.com.task.Fragments.PersonalDataFragment;
 import teamvoy.com.task.dialogs.SearchDialog;
 import teamvoy.com.task.Fragments.AbstractFragment;
 import teamvoy.com.task.Fragments.NavigationDrawerFragment;
 import teamvoy.com.task.Fragments.TopFragment;
 import teamvoy.com.task.Fragments.TrendingFragment;
-import teamvoy.com.task.utils.FacebookUtil;
 import teamvoy.com.task.utils.InternetUtil;
+import teamvoy.com.task.utils.PreferencesUtil;
 
 
 public class MainActivity extends ActionBarActivity
@@ -50,16 +60,24 @@ public class MainActivity extends ActionBarActivity
     private Toolbar mToolbar;
     private AbstractFragment fragment;
     private String mTitle;
+    private CallbackManager callbackManager;
+    private List<String> permissionNeeds;
+    private PreferencesUtil mPrefs;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-     //   FacebookSdk.sdkInitialize(getApplicationContext());
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+        permissionNeeds= Arrays.asList("public_profile",  "email", "user_birthday", "user_friends","user_photos");
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        //setting actionBar
         setSupportActionBar(mToolbar);
+        mPrefs=PreferencesUtil.getInstance(this);
+        callbackManager = CallbackManager.Factory.create();
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.fragment_drawer);
 
@@ -131,6 +149,60 @@ public class MainActivity extends ActionBarActivity
                 .replace(R.id.container, getFragment(position + 1))
                 .commit();
     }
+    private void facebookLogin(){
+        LoginManager.getInstance().logInWithReadPermissions(
+                this,
+                permissionNeeds);
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResults) {
+
+                        GraphRequest request = GraphRequest.newMeRequest(
+                                loginResults.getAccessToken(),
+                                new GraphRequest.GraphJSONObjectCallback() {
+                                    @Override
+                                    public void onCompleted(
+                                            JSONObject object,
+                                            GraphResponse response) {
+                                        // Application code
+
+                                        Log.v("LoginActivity", response.toString());
+                                        try {
+                                            mPrefs.setID(object.getString("id"));
+                                            mPrefs.setName(object.getString("name"));
+                                            mPrefs.setEmail(object.getString("email"));
+                                            mPrefs.setGender(object.getString("gender"));
+                                            mPrefs.setBirthDay(object.getString("birthday"));
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id,name,email,gender, birthday");
+                        request.setParameters(parameters);
+                        request.executeAsync();
+
+                    }
+                    @Override
+                    public void onCancel() {
+
+                        Log.e("dd","facebook login canceled");
+
+                    }
+
+
+                    @Override
+                    public void onError(FacebookException e) {
+
+
+
+                        Log.e("dd", "facebook login failed error");
+
+                    }
+                });
+    }
     private AbstractFragment getFragment(int i) {
         fragment = null;
         Bundle args = new Bundle();
@@ -149,7 +221,7 @@ public class MainActivity extends ActionBarActivity
                 fragment.setArguments(args);
                 break;
             case 3:
-                fragment = new LoginFragment();
+                fragment = new PersonalDataFragment();
                 args.putInt(ARG_SECTION_NUMBER, i);
                 fragment.setArguments(args);
                 break;
@@ -204,7 +276,11 @@ public class MainActivity extends ActionBarActivity
         }
         return super.onCreateOptionsMenu(menu);
     }
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -220,8 +296,7 @@ public class MainActivity extends ActionBarActivity
             dialog.show();
         }
         if(id==R.id.action_login){
-            Intent intent=new Intent(this, FacebookActivity.class);
-            startActivity(intent);
+           facebookLogin();
         }
 
 
