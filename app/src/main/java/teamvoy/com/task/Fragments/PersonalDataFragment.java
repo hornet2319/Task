@@ -13,10 +13,16 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -42,6 +48,7 @@ import teamvoy.com.task.dialogs.BirthdayDialog;
 import teamvoy.com.task.dialogs.EmailDialog;
 import teamvoy.com.task.dialogs.GenderDialog;
 import teamvoy.com.task.dialogs.NameDialog;
+import teamvoy.com.task.dialogs.SearchDialog;
 import teamvoy.com.task.utils.PreferencesUtil;
 
 
@@ -56,12 +63,19 @@ public class PersonalDataFragment extends AbstractFragment {
     private static TextView email_tv;
     private static TextView gender_tv;
     private static TextView birthDay_tv;
+    private TextView image_tv;
+
+    private EditText name_et,email_et;
+    private String genderData="";
+    private static String birthDayData="";;
+    private static String imageData="";
+
+    private View separator1,separator2,separator3,separator4,separator5,separator6;
 
     private Button profile_picture_btn;
-    private Button name_btn;
-    private Button email_btn;
-    private Button gender_btn;
     private Button birthDay_btn;
+
+    private RadioGroup radioGroup;
 
     private static ImageView profile_picture_iv;
 
@@ -69,41 +83,68 @@ public class PersonalDataFragment extends AbstractFragment {
     private Context context;
 
 
+    private boolean isEditModeEnable=false;
 
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_data_management, container, false);
+        setHasOptionsMenu(true);
         // initializing views
          profile_picture_iv=(ImageView)rootView.findViewById(R.id.data_img);
 
         context=getActivity();
 
         profile_picture_btn=(Button)rootView.findViewById(R.id.data_img_btn);
-        name_btn=(Button)rootView.findViewById(R.id.data_name_btn);
-        email_btn=(Button)rootView.findViewById(R.id.data_email_btn);
-        gender_btn=(Button)rootView.findViewById(R.id.data_gender_btn);
+
         birthDay_btn=(Button)rootView.findViewById(R.id.data_bday_btn);
+
+        separator1=rootView.findViewById(R.id.separator1);
+        separator2=rootView.findViewById(R.id.separator2);
+        separator3=rootView.findViewById(R.id.separator3);
+        separator4=rootView.findViewById(R.id.separator4);
+        separator5=rootView.findViewById(R.id.separator5);
+        separator6=rootView.findViewById(R.id.separator6);
+
+        radioGroup=(RadioGroup)rootView.findViewById(R.id.radio_group);
+
+        name_et=(EditText)rootView.findViewById(R.id.data_name_et);
+        email_et=(EditText)rootView.findViewById(R.id.data_email_et);
 
         name_tv=(TextView)rootView.findViewById(R.id.data_name_tv);
         email_tv=(TextView)rootView.findViewById(R.id.data_email_tv);
         gender_tv=(TextView)rootView.findViewById(R.id.data_gender_tv);
         birthDay_tv=(TextView)rootView.findViewById(R.id.data_bday_tv);
+        image_tv=(TextView)rootView.findViewById(R.id.data_img_tv);
+
+
 
         mPrefs=PreferencesUtil.getInstance(getActivity());
+        imageData=mPrefs.getImage("http://graph.facebook.com/" + mPrefs.getID("null") + "/picture?type=large");
+        final RadioButton radio_male=(RadioButton)rootView.findViewById(R.id.radio_male);
+        final RadioButton radio_female=(RadioButton)rootView.findViewById(R.id.radio_female);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // checkedId is the RadioButton selected
+
+                if(radio_male.isChecked()) genderData="male";
+                if(radio_female.isChecked()) genderData="female";
+
+            }
+
+
+        });
 
         //refresh data
         update();
 
 
         //set listener for buttons
-        View.OnClickListener listener=new BtnListener();
+       View.OnClickListener listener=new BtnListener();
         profile_picture_btn.setOnClickListener(listener);
-        name_btn.setOnClickListener(listener);
-        email_btn.setOnClickListener(listener);
-        gender_btn.setOnClickListener(listener);
         birthDay_btn.setOnClickListener(listener);
 
         return rootView;
@@ -111,6 +152,60 @@ public class PersonalDataFragment extends AbstractFragment {
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_edit, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_edit) {
+         isEditModeEnable=true;
+            turnEditModeOn();
+            getActivity().invalidateOptionsMenu();
+
+
+        }
+        if (id == R.id.action_ok) {
+            turnEditModeOff(true);
+            isEditModeEnable=false;
+            getActivity().invalidateOptionsMenu();
+
+        }
+        if (id == R.id.action_cancel) {
+            turnEditModeOff(false);
+            isEditModeEnable=false;
+            getActivity().invalidateOptionsMenu();
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onPrepareOptionsMenu(Menu menu)
+    {
+        MenuItem edit = menu.findItem(R.id.action_edit);
+        MenuItem ok = menu.findItem(R.id.action_ok);
+        MenuItem cancel = menu.findItem(R.id.action_cancel);
+        if(isEditModeEnable)
+        {
+            edit.setVisible(false);
+            ok.setVisible(true);
+            cancel.setVisible(true);
+        }
+        else
+        {
+            edit.setVisible(true);
+            ok.setVisible(false);
+            cancel.setVisible(false);
+        }
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -122,13 +217,15 @@ public class PersonalDataFragment extends AbstractFragment {
     }
     //updating content
     public static void update(){
-        name_tv.setText("Name: " + mPrefs.getName("user"));
-        email_tv.setText("Email: " + mPrefs.getEmail("no email found"));
-        gender_tv.setText("Gender: " + mPrefs.getGender("unknown"));
-        birthDay_tv.setText("BirthDay: " + mPrefs.getBirthDay("unknown"));
+        name_tv.setText(mPrefs.getName("user"));
+        email_tv.setText(mPrefs.getEmail("no email found"));
+        gender_tv.setText(mPrefs.getGender("unknown"));
+        if(birthDayData!="")
+        birthDay_tv.setText(birthDayData);
+        else birthDay_tv.setText(mPrefs.getBirthDay("unknown"));
 
         //setting profile image
-        ImageLoader.getInstance().displayImage(mPrefs.getImage("http://graph.facebook.com/" + mPrefs.getID("null") + "/picture?type=large"), profile_picture_iv);
+        ImageLoader.getInstance().displayImage(imageData, profile_picture_iv);
     }
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -137,7 +234,7 @@ public class PersonalDataFragment extends AbstractFragment {
     }
     //listener for buttons
     private class BtnListener implements View.OnClickListener {
-        AbstractDialog dialog;
+        BirthdayDialog dialog;
         @Override
         public void onClick(View view) {
             switch (view.getId()){
@@ -147,40 +244,65 @@ public class PersonalDataFragment extends AbstractFragment {
                     startActivityForResult(photoPickerIntent, SELECT_PHOTO);
                     break;
                 }
-                case R.id.data_name_btn:{
-                    dialog=new NameDialog(context);
-                    dialog.setMessage("Specify your name, please");
-                    dialog.show();
-                    break;
-                }
 
-                case R.id.data_email_btn:{
-                    dialog=new EmailDialog(context);
-                    dialog.setMessage("Specify your email, please");
-                    dialog.show();
-                    break;
-                }
+
 
                 case R.id.data_bday_btn:{
                      dialog = new BirthdayDialog(context);
                     dialog.setMessage("Specify your birthDay, please");
-                    dialog.show();
+                     birthDayData=dialog.show();
                     break;
 
                 }
 
-                case R.id.data_gender_btn:{
-                    dialog=new GenderDialog(context);
-                    dialog.setMessage("Specify your gender, please");
-                    dialog.show();
-                    break;
-                }
 
             }
-            updateList(true);
+
         }
     }
+    private void turnEditModeOn(){
+        separator1.setVisibility(View.VISIBLE);
+        separator2.setVisibility(View.VISIBLE);
+        separator3.setVisibility(View.VISIBLE);
+        separator4.setVisibility(View.VISIBLE);
+        separator5.setVisibility(View.VISIBLE);
+        separator6.setVisibility(View.VISIBLE);
+        image_tv.setVisibility(View.VISIBLE);
+        profile_picture_btn.setVisibility(View.VISIBLE);
+        name_et.setVisibility(View.VISIBLE);
+        email_et.setVisibility(View.VISIBLE);
+        birthDay_btn.setVisibility(View.VISIBLE);
+        radioGroup.setVisibility(View.VISIBLE);
 
+
+
+    }
+    private void turnEditModeOff(boolean changesConfirmed){
+        separator1.setVisibility(View.GONE);
+        separator2.setVisibility(View.GONE);
+        separator3.setVisibility(View.GONE);
+        separator4.setVisibility(View.GONE);
+        separator5.setVisibility(View.GONE);
+        separator6.setVisibility(View.GONE);
+        image_tv.setVisibility(View.GONE);
+        profile_picture_btn.setVisibility(View.GONE);
+        name_et.setVisibility(View.GONE);
+        email_et.setVisibility(View.GONE);
+        birthDay_btn.setVisibility(View.GONE);
+        radioGroup.setVisibility(View.GONE);
+        if (changesConfirmed){
+            //save name in preferences (when data is not null)
+            if(name_et.getText().toString().length()>1) mPrefs.setName(name_et.getText().toString());
+            //save email in preferences (when data is not null)
+            if(email_et.getText().toString().length()>1) mPrefs.setEmail(email_et.getText().toString());
+            //save image uri in preferences (when data is not null)
+            if(imageData!="")mPrefs.setImage(imageData);
+            if(genderData.length()>1)mPrefs.setGender(genderData);
+            if(birthDayData.length()>1)mPrefs.setBirthDay(birthDayData);
+
+           update();
+        }
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -192,7 +314,8 @@ public class PersonalDataFragment extends AbstractFragment {
                 } else {
 
                     Uri result = data.getData();
-                    mPrefs.setImage(result.toString());
+                    imageData=result.toString();
+                    update();
 
 
                 }

@@ -19,21 +19,17 @@ import teamvoy.com.task.utils.PreferencesUtil;
 /**
  * Created by lubomyrshershun on 8/19/15.
  */
-public class BirthdayDialog extends AbstractDialog {
+public class BirthdayDialog {
     String data="";
+    private Context context;
+    private String message;
     public BirthdayDialog(Context context) {
-        super(context);
+        this.context=context;
     }
-
-    @Override
-    void write(String data) {
-
-        mPrefs.setBirthDay(data);
-        PersonalDataFragment.update();
+    public void setMessage(String message){
+        this.message=message;
     }
-
-    @Override
-    public void show() {
+    public String show() {
         // Process to get Current Date
         int mYear, mMonth, mDay;
         Time today = new Time(Time.getCurrentTimezone());
@@ -58,6 +54,6 @@ public class BirthdayDialog extends AbstractDialog {
         dpd.setMessage(message);
         dpd.setIcon(R.drawable.ic_settings);
         dpd.show();
-        if (data!="") write(data);
+       return data;
     }
 }

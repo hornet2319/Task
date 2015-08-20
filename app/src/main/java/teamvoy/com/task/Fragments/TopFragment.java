@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -19,6 +22,7 @@ import java.util.List;
 
 import teamvoy.com.task.DetailActivity;
 import teamvoy.com.task.R;
+import teamvoy.com.task.dialogs.SearchDialog;
 import teamvoy.com.task.utils.InternetUtil;
 import teamvoy.com.task.utils.JSONUtil;
 import teamvoy.com.task.utils.Recipe;
@@ -41,6 +45,7 @@ public class TopFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         listView=(ListView)rootView.findViewById(R.id.listview_main);
@@ -109,6 +114,33 @@ public class TopFragment extends AbstractFragment {
             atask.cancel(true);
         }
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_search) {
+
+            SearchDialog dialog=new SearchDialog(getActivity());
+            dialog.show();
+        }
+        if(id==R.id.action_login){
+            facebookLogin();
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     void updateList(boolean refresh) {

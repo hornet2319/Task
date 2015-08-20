@@ -13,40 +13,82 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_centerHorizontal="true"/>
-    <Button
-        android:id="@+id/data_img_btn"
-        android:paddingLeft="10dp"
-        android:layout_centerHorizontal="true"
+<LinearLayout
+    android:layout_marginTop="5dp"
+    android:paddingLeft="5dp"
+    android:id="@+id/linear_headers"
+    android:orientation="vertical"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@id/data_img"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <TextView
+        style="@style/tv_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Name:"
+        android:textSize="18sp"
+        />
+    <TextView
+        style="@style/tv_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email:"
+        android:textSize="18sp"
+        />
+    <TextView
+        style="@style/tv_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BirthDay:"
+        android:textSize="18sp"
+       />
+    <TextView
+        style="@style/tv_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gender:"
+        android:textSize="18sp"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_below="@+id/data_img"
-        android:text="Change profile image"/>
+        android:layout_toRightOf="@+id/linear_headers">
     <RelativeLayout
+        style="@style/linear"
         android:id="@+id/linear1"
-        android:layout_below="@+id/data_img_btn"
+
+
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         >
         <TextView
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/data_name_tv"
-
+            android:layout_marginBottom="5dp"
             android:textSize="18sp"
+            android:visibility="visible"
             android:layout_gravity="center_vertical"
             />
-        <Button
-            android:id="@+id/data_name_btn"
-            style="@style/linear"
-            android:layout_alignParentRight="true"
-            android:text="@string/data_button"
-            android:layout_width="wrap_content"
+        <EditText
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_width="100dp"
+            android:visibility="gone"
             android:layout_height="wrap_content" />
+
         </RelativeLayout>
     <RelativeLayout
+        style="@style/linear"
         android:id="@+id/linear2"
         android:layout_below="@+id/linear1"
         android:orientation="horizontal"
@@ -60,17 +102,13 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:textSize="18sp"
+            android:layout_marginBottom="5dp"
             android:layout_gravity="center_vertical"
             />
-        <Button
-            android:id="@+id/data_email_btn"
-            style="@style/linear"
-            android:text="@string/data_button"
-            android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
     </RelativeLayout>
     <RelativeLayout
+        style="@style/linear"
         android:id="@+id/linear3"
         android:layout_below="@+id/linear2"
 
@@ -84,24 +122,20 @@
             android:layout_height="wrap_content"
             android:id="@+id/data_bday_tv"
             android:textSize="18sp"
+            android:layout_marginBottom="5dp"
             android:layout_gravity="center_vertical"
             />
-        <Button
-            android:id="@+id/data_bday_btn"
-            android:layout_alignParentRight="true"
-            style="@style/linear"
-            android:text="@string/data_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
     </RelativeLayout>
     <RelativeLayout
+        style="@style/linear"
         android:id="@+id/linear4"
         android:layout_below="@+id/linear3"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
+            android:layout_marginBottom="5dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
@@ -109,14 +143,8 @@
             android:textSize="18sp"
             android:layout_gravity="center_vertical"
             />
-        <Button
-            android:id="@+id/data_gender_btn"
-            style="@style/linear"
-            android:layout_alignParentRight="true"
-            android:text="@string/data_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </RelativeLayout>
-
+    </LinearLayout>
 </RelativeLayout>
+
 </ScrollView>

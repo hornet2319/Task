@@ -60,9 +60,8 @@ public class MainActivity extends ActionBarActivity
     private Toolbar mToolbar;
     private AbstractFragment fragment;
     private String mTitle;
-    private CallbackManager callbackManager;
-    private List<String> permissionNeeds;
-    private PreferencesUtil mPrefs;
+
+
 
 
     @Override
@@ -71,12 +70,12 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
-        permissionNeeds= Arrays.asList("public_profile",  "email", "user_birthday", "user_friends","user_photos");
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         //setting actionBar
         setSupportActionBar(mToolbar);
-        mPrefs=PreferencesUtil.getInstance(this);
-        callbackManager = CallbackManager.Factory.create();
+
+
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.fragment_drawer);
@@ -149,63 +148,7 @@ public class MainActivity extends ActionBarActivity
                 .replace(R.id.container, getFragment(position + 1))
                 .commit();
     }
-    private void facebookLogin(){
-        LoginManager.getInstance().logInWithReadPermissions(
-                this,
-                permissionNeeds);
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResults) {
 
-                        GraphRequest request = GraphRequest.newMeRequest(
-                                loginResults.getAccessToken(),
-                                new GraphRequest.GraphJSONObjectCallback() {
-                                    @Override
-                                    public void onCompleted(
-                                            JSONObject object,
-                                            GraphResponse response) {
-                                        // Application code
-
-                                        Log.v("LoginActivity", response.toString());
-                                        try {
-                                            mPrefs.setID(object.getString("id"));
-                                            mPrefs.setName(object.getString("name"));
-                                            mPrefs.setEmail(object.getString("email"));
-                                            mPrefs.setGender(object.getString("gender"));
-                                            mPrefs.setBirthDay(object.getString("birthday"));
-                                            mPrefs.setImage("http://graph.facebook.com/" + mPrefs.getID("null") + "/picture?type=large");
-                                            PersonalDataFragment.update();
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                        Bundle parameters = new Bundle();
-                        parameters.putString("fields", "id,name,email,gender, birthday");
-                        request.setParameters(parameters);
-                        request.executeAsync();
-
-
-                    }
-                    @Override
-                    public void onCancel() {
-
-                        Log.e("dd","facebook login canceled");
-
-                    }
-
-
-                    @Override
-                    public void onError(FacebookException e) {
-
-
-
-                        Log.e("dd", "facebook login failed error");
-
-                    }
-                });
-    }
     private AbstractFragment getFragment(int i) {
         fragment = null;
         Bundle args = new Bundle();
@@ -273,16 +216,11 @@ public class MainActivity extends ActionBarActivity
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-          getMenuInflater().inflate(R.menu.main, menu);
+         // getMenuInflater().inflate(R.menu.main, menu);
             restoreActionBar();
             return true;
         }
         return super.onCreateOptionsMenu(menu);
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -299,7 +237,7 @@ public class MainActivity extends ActionBarActivity
             dialog.show();
         }
         if(id==R.id.action_login){
-           facebookLogin();
+
         }
 
 
