@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.Time;
+import android.util.Log;
 import android.widget.DatePicker;
 
 import java.util.Calendar;
@@ -29,8 +30,9 @@ public class BirthdayDialog {
     public void setMessage(String message){
         this.message=message;
     }
-    public String show() {
+    public void show() {
         // Process to get Current Date
+        PersonalDataFragment.birthDayData="";
         int mYear, mMonth, mDay;
         Time today = new Time(Time.getCurrentTimezone());
         today.setToNow();
@@ -44,9 +46,10 @@ public class BirthdayDialog {
                     @Override
                     public void onDateSet(DatePicker view, int nYear,
                                           int monthOfYear, int dayOfMonth) {
-                        // toast=Toast.makeText(context, ""+dayOfMonth, Toast.LENGTH_SHORT);
-                        //  toast.show();
                         data=dayOfMonth + "/" + (monthOfYear + 1) + "/" + nYear;
+                        Log.d("BirthDayDialog data",data);
+                        PersonalDataFragment.birthDayData=data;
+                        PersonalDataFragment.updateBirth();
 
                     }
                 }, mYear, mMonth, mDay);
@@ -54,6 +57,7 @@ public class BirthdayDialog {
         dpd.setMessage(message);
         dpd.setIcon(R.drawable.ic_settings);
         dpd.show();
-       return data;
+        Log.d("BirthDayDialog result",data);
+      ;
     }
 }

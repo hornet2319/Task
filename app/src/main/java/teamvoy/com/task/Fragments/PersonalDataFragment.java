@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -67,7 +68,7 @@ public class PersonalDataFragment extends AbstractFragment {
 
     private EditText name_et,email_et;
     private String genderData="";
-    private static String birthDayData="";;
+    public static String birthDayData="";;
     private static String imageData="";
 
     private View separator1,separator2,separator3,separator4,separator5,separator6;
@@ -132,6 +133,7 @@ public class PersonalDataFragment extends AbstractFragment {
 
                 if(radio_male.isChecked()) genderData="male";
                 if(radio_female.isChecked()) genderData="female";
+                updateGender();
 
             }
 
@@ -220,9 +222,7 @@ public class PersonalDataFragment extends AbstractFragment {
         name_tv.setText(mPrefs.getName("user"));
         email_tv.setText(mPrefs.getEmail("no email found"));
         gender_tv.setText(mPrefs.getGender("unknown"));
-        if(birthDayData!="")
-        birthDay_tv.setText(birthDayData);
-        else birthDay_tv.setText(mPrefs.getBirthDay("unknown"));
+       birthDay_tv.setText(mPrefs.getBirthDay("unknown"));
 
         //setting profile image
         ImageLoader.getInstance().displayImage(imageData, profile_picture_iv);
@@ -250,7 +250,10 @@ public class PersonalDataFragment extends AbstractFragment {
                 case R.id.data_bday_btn:{
                      dialog = new BirthdayDialog(context);
                     dialog.setMessage("Specify your birthDay, please");
-                     birthDayData=dialog.show();
+                    dialog.show();
+                    //Log.d("PersonalDataFragm data",data);
+                    // birthDayData=data;
+
                     break;
 
                 }
@@ -300,8 +303,15 @@ public class PersonalDataFragment extends AbstractFragment {
             if(genderData.length()>1)mPrefs.setGender(genderData);
             if(birthDayData.length()>1)mPrefs.setBirthDay(birthDayData);
 
-           update();
+
         }
+        update();
+    }
+    public static void updateBirth(){
+        birthDay_tv.setText(birthDayData);
+    }
+    private void updateGender(){
+        gender_tv.setText(genderData);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
