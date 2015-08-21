@@ -16,10 +16,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import teamvoy.com.task.utils.JSONUtil;
@@ -29,15 +39,20 @@ public class DetailActivity extends ActionBarActivity {
     private String recipe_id;
     private Recipe recipe=null;
     private Toolbar mToolbar;
+    private WebView mWeb;
     private ImageView main_img;
     private TextView description,bar_text,header,publisher;
     private RatingBar bar;
     private ATask aTask;
+    private ShareButton shareButton;
+    private CallbackManager callbackManager;
+    private ShareDialog shareDialog;
+    ShareLinkContent linkContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_detail_web);
         Intent i=getIntent();
         aTask=new ATask(this);
         mToolbar=(Toolbar)findViewById(R.id.toolbar_actionbar);
@@ -45,13 +60,27 @@ public class DetailActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Back");
 
+        //initialling views
         recipe_id=i.getStringExtra("id");
+       /*
        main_img=(ImageView)findViewById(R.id.det_main_img);
+
         header=(TextView)findViewById(R.id.det_header);
         description=(TextView)findViewById(R.id.det_description);
-        bar=(RatingBar)findViewById(R.id.det_rating);
         bar_text=(TextView)findViewById(R.id.det_rating_text);
         publisher=(TextView)findViewById(R.id.det_publisher);
+
+        bar=(RatingBar)findViewById(R.id.det_rating);
+
+        //sharing button
+        shareButton = (ShareButton)findViewById(R.id.det_share);*/
+        mWeb=(WebView)findViewById(R.id.webview);
+        WebSettings webSettings = mWeb.getSettings();
+        webSettings.setJavaScriptEnabled(false);
+        mWeb.setWebViewClient(new WebViewClient());
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
+
        aTask.execute();
     }
 
@@ -66,7 +95,7 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-       // getMenuInflater().inflate(R.menu.menu_detail_acivity, menu);
+        getMenuInflater().inflate(R.menu.menu_detail_acivity, menu);
         return true;
     }
 
@@ -78,7 +107,13 @@ public class DetailActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        if(id==R.id.action_share){
+            if (ShareDialog.canShow(ShareLinkContent.class)) {
 
+                if(linkContent!=null)
+                shareDialog.show(linkContent);
+            }
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -120,7 +155,7 @@ public class DetailActivity extends ActionBarActivity {
             super.onPostExecute(aVoid);
             refreshDialog.dismiss();
            // if(recipe==null) onBackPressed();
-            ImageLoader.getInstance().displayImage(recipe.getImage_url(), main_img);
+         /*   ImageLoader.getInstance().displayImage(recipe.getImage_url(), main_img);
 
             header.setText(Html.fromHtml("<strong>" + recipe.getTitle() + "</strong>"));
             description.setText(recipe.getIngredients().replace("[\"", "").replaceAll("\",\"","\n").replace("\\n","")
@@ -137,6 +172,20 @@ public class DetailActivity extends ActionBarActivity {
                     startActivity(i);
                 }
             });
+            Log.i("Recipelink",recipe.getSource_url());
+            content = new ShareLinkContent.Builder()
+                    .setContentUrl(Uri.parse(recipe.getSource_url()))
+                    .setContentTitle(recipe.getTitle())
+                    .setImageUrl(Uri.parse(recipe.getImage_url()))
+                    .build();
+            shareButton.setShareContent(content); */
+            linkContent = new ShareLinkContent.Builder()
+                    .setContentUrl(Uri.parse(recipe.getSource_url()))
+                    .setContentTitle(recipe.getTitle())
+                    .setImageUrl(Uri.parse(recipe.getImage_url()))
+                    .build();
+        mWeb.loadUrl(recipe.getSource_url());
+
         }
     }
 }

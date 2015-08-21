@@ -29,7 +29,7 @@ import teamvoy.com.task.utils.PreferencesUtil;
 
 
 /**
- * Created by lubomyrshershun on 8/18/15.
+ * Created by lubomyr shershun on 8/18/15.
  */
 public class PersonalDataFragment extends AbstractFragment {
     protected static final String ARG_SECTION_NUMBER = "section_number";

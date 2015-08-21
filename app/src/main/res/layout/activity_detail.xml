@@ -13,7 +13,9 @@
             android:layout_centerHorizontal="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar_actionbar"/>
+            android:layout_below="@id/toolbar_actionbar"
+            />
+
 
         <RelativeLayout
             android:id="@+id/lay2"
@@ -83,6 +85,11 @@
                     android:textSize="@dimen/det_desc_textsize"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"/>
+                <com.facebook.share.widget.ShareButton
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/det_share"/>
             </LinearLayout>
             <View
                 android:id="@+id/View03"
