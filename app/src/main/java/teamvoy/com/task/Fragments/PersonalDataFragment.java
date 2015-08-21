@@ -4,15 +4,8 @@ import android.app.Activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.tv.TvInputService;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,30 +19,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-
 import teamvoy.com.task.MainActivity;
 import teamvoy.com.task.R;
-import teamvoy.com.task.dialogs.AbstractDialog;
 import teamvoy.com.task.dialogs.BirthdayDialog;
-import teamvoy.com.task.dialogs.EmailDialog;
-import teamvoy.com.task.dialogs.GenderDialog;
-import teamvoy.com.task.dialogs.NameDialog;
-import teamvoy.com.task.dialogs.SearchDialog;
 import teamvoy.com.task.utils.PreferencesUtil;
 
 
@@ -68,7 +43,7 @@ public class PersonalDataFragment extends AbstractFragment {
 
     private EditText name_et,email_et;
     private String genderData="";
-    public static String birthDayData="";;
+    public static String birthDayData="";
     private static String imageData="";
 
     private View separator1,separator2,separator3,separator4,separator5,separator6;
@@ -126,6 +101,8 @@ public class PersonalDataFragment extends AbstractFragment {
         imageData=mPrefs.getImage("http://graph.facebook.com/" + mPrefs.getID("null") + "/picture?type=large");
         final RadioButton radio_male=(RadioButton)rootView.findViewById(R.id.radio_male);
         final RadioButton radio_female=(RadioButton)rootView.findViewById(R.id.radio_female);
+
+        //listener for radioButtons
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -195,6 +172,7 @@ public class PersonalDataFragment extends AbstractFragment {
         MenuItem edit = menu.findItem(R.id.action_edit);
         MenuItem ok = menu.findItem(R.id.action_ok);
         MenuItem cancel = menu.findItem(R.id.action_cancel);
+
         if(isEditModeEnable)
         {
             edit.setVisible(false);
@@ -215,7 +193,7 @@ public class PersonalDataFragment extends AbstractFragment {
     }
     @Override
     public void updateList(boolean refresh) {
-        //setting data in TextViews
+
     }
     //updating content
     public static void update(){
@@ -293,6 +271,7 @@ public class PersonalDataFragment extends AbstractFragment {
         email_et.setVisibility(View.GONE);
         birthDay_btn.setVisibility(View.GONE);
         radioGroup.setVisibility(View.GONE);
+
         if (changesConfirmed){
             //save name in preferences (when data is not null)
             if(name_et.getText().toString().length()>1) mPrefs.setName(name_et.getText().toString());
@@ -307,9 +286,11 @@ public class PersonalDataFragment extends AbstractFragment {
         }
         update();
     }
+    //update BirthDay;
     public static void updateBirth(){
         birthDay_tv.setText(birthDayData);
     }
+
     private void updateGender(){
         gender_tv.setText(genderData);
     }
