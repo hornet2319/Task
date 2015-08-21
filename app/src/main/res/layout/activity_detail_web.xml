@@ -7,10 +7,17 @@
     android:id="@+id/webview_frame">
     <include android:id="@+id/toolbar_actionbar" layout="@layout/toolbar_default"
         android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar_actionbar" />
 
     <WebView
-        android:layout_below="@id/toolbar_actionbar"
+        android:layout_below="@id/progressBar"
         android:id="@+id/webview"
+
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         />

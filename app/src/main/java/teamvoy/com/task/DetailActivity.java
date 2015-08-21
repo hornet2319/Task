@@ -16,10 +16,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -47,7 +49,8 @@ public class DetailActivity extends ActionBarActivity {
     private ShareButton shareButton;
     private CallbackManager callbackManager;
     private ShareDialog shareDialog;
-    ShareLinkContent linkContent;
+    private ShareLinkContent linkContent;
+    private ProgressBar progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,8 @@ public class DetailActivity extends ActionBarActivity {
 
         //initialling views
         recipe_id=i.getStringExtra("id");
+        progress = (ProgressBar) findViewById(R.id.progressBar);
+        progress.setMax(100);
        /*
        main_img=(ImageView)findViewById(R.id.det_main_img);
 
@@ -77,7 +82,8 @@ public class DetailActivity extends ActionBarActivity {
         mWeb=(WebView)findViewById(R.id.webview);
         WebSettings webSettings = mWeb.getSettings();
         webSettings.setJavaScriptEnabled(false);
-        mWeb.setWebViewClient(new WebViewClient());
+
+
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
 
@@ -117,6 +123,22 @@ public class DetailActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    private class MyWebViewClient extends WebChromeClient {
+
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            setValue(newProgress);
+
+            super.onProgressChanged(view, newProgress);
+        }
+    }
+
+
+    public void setValue(int progress) {
+        if(progress==100)this.progress.setVisibility(View.GONE);
+        this.progress.setProgress(progress);
+
+    }
     private class ATask extends AsyncTask<Void,Void,Void>{
         private Context context;
         private ProgressDialog refreshDialog;
@@ -141,6 +163,7 @@ public class DetailActivity extends ActionBarActivity {
             refreshDialog.setCancelable(true);
             // Show the dialog
             refreshDialog.show();
+
         }
 
         @Override
@@ -154,6 +177,8 @@ public class DetailActivity extends ActionBarActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             refreshDialog.dismiss();
+            mWeb.setWebChromeClient(new MyWebViewClient());
+            mWeb.setWebViewClient(new CustomWebViewClient(recipe.getSource_url()));
            // if(recipe==null) onBackPressed();
          /*   ImageLoader.getInstance().displayImage(recipe.getImage_url(), main_img);
 
@@ -185,7 +210,25 @@ public class DetailActivity extends ActionBarActivity {
                     .setImageUrl(Uri.parse(recipe.getImage_url()))
                     .build();
         mWeb.loadUrl(recipe.getSource_url());
+            progress.setVisibility(View.VISIBLE);
+            progress.setProgress(0);
 
+        }
+    }
+
+    private class CustomWebViewClient extends WebViewClient {
+        private String currentUrl;
+
+        public CustomWebViewClient(String currentUrl){
+            this.currentUrl = currentUrl;
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if(url.equals(currentUrl)){
+                view.loadUrl(url);
+            }
+            return true;
         }
     }
 }
