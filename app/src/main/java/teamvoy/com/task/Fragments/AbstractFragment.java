@@ -77,7 +77,6 @@ public abstract class AbstractFragment extends Fragment {
                                             mPrefs.setGender(object.getString("gender"));
                                             mPrefs.setBirthDay(object.getString("birthday"));
                                             mPrefs.setImage("http://graph.facebook.com/" + mPrefs.getID("null") + "/picture?type=large");
-                                            PersonalDataFragment.update();
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
