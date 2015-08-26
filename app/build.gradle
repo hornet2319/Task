@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "teamvoy.com.task"
-        minSdkVersion 15
-        targetSdkVersion 21
+        minSdkVersion 16
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -23,8 +23,10 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.android.support:customtabs:23.0.0+'
     compile 'com.android.support:recyclerview-v7:22.2.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     compile 'com.yqritc:recyclerview-flexibledivider:1.2.5'
     compile 'com.facebook.android:facebook-android-sdk:4.0.0'
+
 }

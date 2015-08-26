@@ -2,10 +2,22 @@ package teamvoy.com.task.Fragments;
 
 import android.app.Activity;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,9 +34,16 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import teamvoy.com.task.MainActivity;
 import teamvoy.com.task.R;
 import teamvoy.com.task.dialogs.BirthdayDialog;
+import teamvoy.com.task.utils.ImageLoaderUtil;
 import teamvoy.com.task.utils.PreferencesUtil;
 
 
@@ -34,6 +53,7 @@ import teamvoy.com.task.utils.PreferencesUtil;
 public class PersonalDataFragment extends AbstractFragment {
     protected static final String ARG_SECTION_NUMBER = "section_number";
     private final int SELECT_PHOTO = 1;
+    protected static final int YOUR_SELECT_PICTURE_REQUEST_CODE = 123;
 
     private static TextView name_tv;
     private static TextView email_tv;
@@ -41,7 +61,8 @@ public class PersonalDataFragment extends AbstractFragment {
     private static TextView birthDay_tv;
     private TextView image_tv;
 
-    private EditText name_et,email_et;
+    private static EditText name_et;
+    private static EditText email_et;
     private String genderData="";
     public static String birthDayData="";
     private static String imageData="";
@@ -56,12 +77,12 @@ public class PersonalDataFragment extends AbstractFragment {
     private static ImageView profile_picture_iv;
 
     private static PreferencesUtil mPrefs;
-    private Context context;
+
 
 
     private boolean isEditModeEnable=false;
 
-
+    private static Context context;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -95,6 +116,24 @@ public class PersonalDataFragment extends AbstractFragment {
         birthDay_tv=(TextView)rootView.findViewById(R.id.data_bday_tv);
         image_tv=(TextView)rootView.findViewById(R.id.data_img_tv);
 
+
+        birthDay_tv.setOnClickListener(new View.OnClickListener() {
+            BirthdayDialog dialog;
+            @Override
+            public void onClick(View view) {
+                dialog = new BirthdayDialog(context);
+                dialog.setMessage("Specify your birthDay, please");
+                dialog.show();
+            }
+        });
+        profile_picture_iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isEditModeEnable){
+                    openImageIntent();
+                }
+            }
+        });
 
 
         mPrefs=PreferencesUtil.getInstance(getActivity());
@@ -197,13 +236,17 @@ public class PersonalDataFragment extends AbstractFragment {
     }
     //updating content
     public static void update(){
+        name_et.setHint(mPrefs.getName("username"));
+        email_et.setHint(mPrefs.getEmail("email"));
         name_tv.setText(mPrefs.getName("user"));
         email_tv.setText(mPrefs.getEmail("no email found"));
         gender_tv.setText(mPrefs.getGender("unknown"));
        birthDay_tv.setText(mPrefs.getBirthDay("unknown"));
 
         //setting profile image
-        ImageLoader.getInstance().displayImage(imageData, profile_picture_iv);
+        ImageLoaderUtil imageLoaderUtil= new ImageLoaderUtil(context);
+        ImageLoader imageLoader = imageLoaderUtil.getImageLoader();
+        imageLoader.displayImage(imageData, profile_picture_iv);
     }
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -241,6 +284,45 @@ public class PersonalDataFragment extends AbstractFragment {
 
         }
     }
+    private Uri outputFileUri;
+
+    //image change listener
+    private void openImageIntent() {
+// Determine Uri of camera image to save.
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "pic" + File.separator);
+        root.mkdirs();
+        final String fname = "img_"+ System.currentTimeMillis() + ".jpg";
+        final File sdImageMainDirectory = new File(root, fname);
+        outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+        // Camera.
+        final List<Intent> cameraIntents = new ArrayList<Intent>();
+        final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        final PackageManager packageManager = getActivity().getPackageManager();
+        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for(ResolveInfo res : listCam) {
+            final String packageName = res.activityInfo.packageName;
+            final Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(packageName);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            cameraIntents.add(intent);
+        }
+
+        // Filesystem.
+        final Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        // Chooser of filesystem options.
+        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+
+        // Add the camera options.
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+
+        startActivityForResult(chooserIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
+    }
+
     private void turnEditModeOn(){
         separator1.setVisibility(View.VISIBLE);
         separator2.setVisibility(View.VISIBLE);
@@ -249,11 +331,14 @@ public class PersonalDataFragment extends AbstractFragment {
         separator5.setVisibility(View.VISIBLE);
         separator6.setVisibility(View.VISIBLE);
         image_tv.setVisibility(View.VISIBLE);
-        profile_picture_btn.setVisibility(View.VISIBLE);
+      //  profile_picture_btn.setVisibility(View.VISIBLE);
         name_et.setVisibility(View.VISIBLE);
         email_et.setVisibility(View.VISIBLE);
-        birthDay_btn.setVisibility(View.VISIBLE);
+       // birthDay_btn.setVisibility(View.VISIBLE);
         radioGroup.setVisibility(View.VISIBLE);
+        name_tv.setVisibility(View.GONE);
+        email_tv.setVisibility(View.GONE);
+        gender_tv.setVisibility(View.GONE);
 
 
 
@@ -266,11 +351,14 @@ public class PersonalDataFragment extends AbstractFragment {
         separator5.setVisibility(View.GONE);
         separator6.setVisibility(View.GONE);
         image_tv.setVisibility(View.GONE);
-        profile_picture_btn.setVisibility(View.GONE);
+       // profile_picture_btn.setVisibility(View.GONE);
         name_et.setVisibility(View.GONE);
         email_et.setVisibility(View.GONE);
-        birthDay_btn.setVisibility(View.GONE);
+      //  birthDay_btn.setVisibility(View.GONE);
         radioGroup.setVisibility(View.GONE);
+        name_tv.setVisibility(View.VISIBLE);
+        email_tv.setVisibility(View.VISIBLE);
+        gender_tv.setVisibility(View.VISIBLE);
 
         if (changesConfirmed){
             //save name in preferences (when data is not null)
@@ -284,6 +372,7 @@ public class PersonalDataFragment extends AbstractFragment {
 
 
         }
+        imageData=mPrefs.getImage("null");
         update();
     }
     //update BirthDay;
@@ -294,22 +383,80 @@ public class PersonalDataFragment extends AbstractFragment {
     private void updateGender(){
         gender_tv.setText(genderData);
     }
+
+    //checking camera orientation
+    public void getCameraPhotoOrientation(String file) {
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file, bounds);
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        Bitmap bm = BitmapFactory.decodeFile(file, opts);
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+        int orientation = orientString != null ? Integer.parseInt(orientString) :  ExifInterface.ORIENTATION_NORMAL;
+
+        int rotationAngle = 0;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+            Log.d("RotationAngle",""+rotationAngle);
+        Matrix matrix = new Matrix();
+        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+        //saving rotatedBitmap
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "pic" + File.separator);
+        File img=new File(file);
+        if (img.exists ()) img.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(img);
+            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         updateList(true);
-        switch(requestCode) {
-            case SELECT_PHOTO:
+        String filePath;
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == YOUR_SELECT_PICTURE_REQUEST_CODE) {
+                final boolean isCamera;
                 if (data == null) {
-                    return;
+                    isCamera = true;
                 } else {
-
-                    Uri result = data.getData();
-                    imageData=result.toString();
-                    update();
-
-
+                    final String action = data.getAction();
+                    if (action == null) {
+                        isCamera = false;
+                    } else {
+                        isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    }
                 }
+
+                Uri selectedImageUri;
+                if (isCamera) {
+                    selectedImageUri = outputFileUri;
+
+                } else {
+                    selectedImageUri = data == null ? null : data.getData();
+                }
+                Log.d("Camera",selectedImageUri.toString());
+
+                getCameraPhotoOrientation(selectedImageUri.getPath());
+
+                imageData=selectedImageUri.toString();
+                update();
+            }
         }
     }
 }

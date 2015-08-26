@@ -1,10 +1,19 @@
 package teamvoy.com.task;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.customtabs.CustomTabsCallback;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsServiceConnection;
+import android.support.customtabs.CustomTabsSession;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,7 +46,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import teamvoy.com.task.utils.JSONUtil;
 import teamvoy.com.task.utils.Recipe;
 
-public class DetailActivity extends ActionBarActivity {
+public class DetailActivity extends AppCompatActivity {
     private String recipe_id;
     private Recipe recipe=null;
     private Toolbar mToolbar;
@@ -51,35 +60,26 @@ public class DetailActivity extends ActionBarActivity {
     private ShareDialog shareDialog;
     private ShareLinkContent linkContent;
     private ProgressBar progress;
+    private CustomTabsSession mCustomTabsSession;
+    private CustomTabsClient mClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_web);
-        Intent i=getIntent();
-        aTask=new ATask(this);
-        mToolbar=(Toolbar)findViewById(R.id.toolbar_actionbar);
+        Intent i = getIntent();
+        aTask = new ATask(this);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Back");
 
         //initialling views
-        recipe_id=i.getStringExtra("id");
-        progress = (ProgressBar) findViewById(R.id.progressBar);
-        progress.setMax(100);
-       /*
-       main_img=(ImageView)findViewById(R.id.det_main_img);
+        recipe_id = i.getStringExtra("id");
+      //  progress = (ProgressBar) findViewById(R.id.progressBar);
+     //   progress.setMax(100);
 
-        header=(TextView)findViewById(R.id.det_header);
-        description=(TextView)findViewById(R.id.det_description);
-        bar_text=(TextView)findViewById(R.id.det_rating_text);
-        publisher=(TextView)findViewById(R.id.det_publisher);
-
-        bar=(RatingBar)findViewById(R.id.det_rating);
-
-        //sharing button
-        shareButton = (ShareButton)findViewById(R.id.det_share);*/
-        mWeb=(WebView)findViewById(R.id.webview);
+        mWeb = (WebView) findViewById(R.id.webview);
         WebSettings webSettings = mWeb.getSettings();
         webSettings.setJavaScriptEnabled(false);
 
@@ -87,15 +87,40 @@ public class DetailActivity extends ActionBarActivity {
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
 
-       aTask.execute();
+
+        // Binds to the service.
+
+
+        CustomTabsClient.bindCustomTabsService(this,"teamvoy.com.task", new CustomTabsServiceConnection() {
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
+                // mClient is no longer valid. This also invalidates sessions.
+                mClient = null;
+            }
+
+            @Override
+            public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
+                // mClient is now valid.
+                mClient = client;
+                aTask.execute();
+            }
+
+        });
+// With a valid mClient.
+            if(mClient!=null) mClient.warmup(0);
+
+
+
+
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (aTask != null && (aTask.getStatus() == AsyncTask.Status.RUNNING)) {
-            aTask.cancel(true);
-        }
+      //  if (aTask != null && (aTask.getStatus() == AsyncTask.Status.RUNNING)) {
+      //      aTask.cancel(true);
+      //  }
     }
 
     @Override
@@ -142,9 +167,11 @@ public class DetailActivity extends ActionBarActivity {
     private class ATask extends AsyncTask<Void,Void,Void>{
         private Context context;
         private ProgressDialog refreshDialog;
+        private Activity activity;
 
-        public ATask(Context context) {
-            this.context = context;
+        public ATask(Activity activity) {
+            this.context = activity.getBaseContext();
+            this.activity=activity;
         }
 
 
@@ -152,17 +179,17 @@ public class DetailActivity extends ActionBarActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            refreshDialog = new ProgressDialog(new ContextThemeWrapper(context, R.style.AppTheme));
+          //  refreshDialog = new ProgressDialog(new ContextThemeWrapper(context, R.style.AppTheme));
             // Inform of the refresh
-            refreshDialog.setMessage("Loading...");
+          //  refreshDialog.setMessage("Loading...");
             // Spin the wheel whilst the dialog exists
-            refreshDialog.setIndeterminate(false);
+          //  refreshDialog.setIndeterminate(false);
             // Don't exit the dialog when the screen is touched
-            refreshDialog.setCanceledOnTouchOutside(false);
+         //   refreshDialog.setCanceledOnTouchOutside(false);
             // Don't exit the dialog when back is pressed
-            refreshDialog.setCancelable(true);
+          //  refreshDialog.setCancelable(true);
             // Show the dialog
-            refreshDialog.show();
+         //   refreshDialog.show();
 
         }
 
@@ -176,7 +203,7 @@ public class DetailActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            refreshDialog.dismiss();
+//            refreshDialog.dismiss();
             mWeb.setWebChromeClient(new MyWebViewClient());
             mWeb.setWebViewClient(new CustomWebViewClient(recipe.getSource_url()));
            // if(recipe==null) onBackPressed();
@@ -209,11 +236,33 @@ public class DetailActivity extends ActionBarActivity {
                     .setContentTitle(recipe.getTitle())
                     .setImageUrl(Uri.parse(recipe.getImage_url()))
                     .build();
-        mWeb.loadUrl(recipe.getSource_url());
-            progress.setVisibility(View.VISIBLE);
-            progress.setProgress(0);
+     //   mWeb.loadUrl(recipe.getSource_url());
+       //     progress.setVisibility(View.VISIBLE);
+       //     progress.setProgress(0);
 
+
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(getSession());
+            builder.setToolbarColor(getResources().getColor(R.color.myPrimaryColor)).setShowTitle(true);
+// Application exit animation, Chrome enter animation.
+            builder.setStartAnimations(getApplicationContext(), R.anim.slide_in_right, R.anim.slide_out_left);
+// vice versa
+            builder.setExitAnimations(getApplicationContext(), R.anim.slide_in_left, R.anim.slide_out_right);
+            builder.setCloseButtonIcon(
+                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_back));
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(activity, Uri.parse(recipe.getSource_url()));
         }
+    }
+    private CustomTabsSession getSession() {
+
+            mCustomTabsSession = mClient.newSession(new CustomTabsCallback() {
+                @Override
+                public void onNavigationEvent(int navigationEvent, Bundle extras) {
+                    Log.w("ChromeCustomTabs", "onNavigationEvent: Code = " + navigationEvent);
+                }
+            });
+
+        return mCustomTabsSession;
     }
 
     private class CustomWebViewClient extends WebViewClient {
